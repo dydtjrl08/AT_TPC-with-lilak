@@ -1,5 +1,5 @@
 #include "TPCDrum.h"
-
+#include <iostream>
 ClassImp(TPCDrum);
 
 TPCDrum::TPCDrum()
@@ -134,17 +134,23 @@ void TPCDrum::GetCoordinateGeantToPad(double& x, double& y, double& z)
     // Convert Z and Y axis
     tmpZ = tmpY;
     tmpY = z;
-
+    // tmpY = fTPCDrum->fSiPlanePosAtPadPlaneCenter;
+    // tmpZ = 0;
+    
     // Shift drift height distance
     double activeDriftHeight = fChamberHeight/2. - fReadoutPCBThickness;
     tmpZ = tmpZ + activeDriftHeight;
+    //lk_info << "tmpZ : " << tmpZ << endl;
 
+//    lk_info << " tmeY : " << tmpY << endl;
     // Shift y-axis 
-    double padHeight = fPadPlane->GetPadHeight();
-    double padGap = fPadPlane->GetPadGap();
-    double layerNum = fPadPlane->GetLayerNum();
+    double padHeight = fPadPlane->GetPadHeight(); // 11.9
+    double padGap = fPadPlane->GetPadGap(); // 0.1
+    double layerNum = fPadPlane->GetLayerNum(); // 12
     double shiftHeight = (padHeight+padGap)*(layerNum/2.-1.) + (padHeight+padGap)/2.;
-    tmpY = tmpY + shiftHeight;
+    tmpY = tmpY + shiftHeight; // shiftHeight = 66;
+
+//    lk_info << "temY : " << tmpY << endl;
 
     x = tmpX;
     y = tmpY;
@@ -156,6 +162,7 @@ void TPCDrum::GetCoordinatePadToGeant(double& x, double& y, double& z)
     double tmpX = x;
     double tmpY = y;
     double tmpZ = z;
+//    std::cout << "GetCoordinatePadToGeant : " << tmpX << std::endl;
 
     // Shift y-axis 
     double padHeight = fPadPlane->GetPadHeight();
@@ -194,6 +201,13 @@ double TPCDrum::GetGatingGridGeantYPos()
 
 bool TPCDrum::InitSiDetector()
 {   
+    std::cout << "InitSiDetector in TPCDrum " << std::endl;
+  
+    std::cout << "SiDetectorNumber : " << fSiDetNum << std::endl;
+  
+    std::cout << "Detector Name: " << fSiDetectorName[0] << std::endl;
+
+    
     double awayBeamCenter = 22.; // [mm]
     double leastDistance = 1.; // [mm]
     double z = 175.; // [mm] start height
@@ -206,7 +220,8 @@ bool TPCDrum::InitSiDetector()
         z -= (fSiWidth + fSiCaseWidth)/2.;
         fSiDetectorCenter[i][0] = x;
         fSiDetectorCenter[i][1] = z;
-
+	
+	std::cout << "Si Detector Num : " << i << " , Detector Center Position x = " << x << " , z = " << z << std::endl;
         z -= (leastDistance + (fSiWidth + fSiCaseWidth)/2.);
     }
 
@@ -215,6 +230,8 @@ bool TPCDrum::InitSiDetector()
         double height = beamCenterY - sign*((fSiHeight+fSiCaseWidth)/2. +awayBeamCenter);
         fSiDetectorCenter[i][0] = 0.;
         fSiDetectorCenter[i][1] = height;
+
+	std::cout << "Si Detector Num : " << i << " , Detector Center Position x = " << 0 << " , z = " << height << std::endl;
     }
 
     fSiDetectorName[0] = "SiDet_RU";
@@ -225,6 +242,6 @@ bool TPCDrum::InitSiDetector()
     fSiDetectorName[5] = "SiDet_LD";
     fSiDetectorName[6] = "SiDet_U";
     fSiDetectorName[7] = "SiDet_D";
-
+    
     return true;
 }

@@ -339,6 +339,9 @@ class LKRun : public LKVirtualRun
         std::vector<TString> fBranchNames;
         std::map<TString, TClonesArray*> fBranchPtrMap;
 
+
+	std::map<TString,Int_t> fBranchIndexMap;
+
         Int_t fCountRunObjects = 0;
         TObject **fRunObjectPtr;
         TString fRunObjectName[20];

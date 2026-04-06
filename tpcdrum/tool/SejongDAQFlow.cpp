@@ -1,4 +1,12 @@
 #include "SejongDAQFlow.h"
+#include <iostream>
+#include <string>
+
+
+#define RESET "\033[0m"
+#define MAGENTA "\033[35m"
+#define GREEN "\033[32m"
+#define LOG(msg) std::cout << "[" << __func__ << " : " << __LINE__ << "] " << msg << std::endl
 
 SejongDAQFlow::SejongDAQFlow()
 {
@@ -19,6 +27,8 @@ RunList SejongDAQFlow::GetRunList(TString input, TString rejectRun, bool isDAQSt
 {
     RunList runList;
 
+    std::cout << input << std::endl;
+
     if(input.Index(".list") != -1 || input.Index(".lis") != -1 || input.Index(".text") != -1 || input.Index(".txt") != -1 || input.Index(".dat") != -1){
         vector<Int_t> rejectRuns = GetRunsFromString(rejectRun);
         runList = GetLines(input, isDAQStage);
@@ -33,7 +43,9 @@ RunList SejongDAQFlow::GetRunList(TString input, TString rejectRun, bool isDAQSt
     }
     else{
         vector<Int_t> excuteRuns = GetRunsFromString(input);
-        vector<Int_t> rejectRuns = GetRunsFromString(rejectRun);
+	std::cout << GREEN << excuteRuns.size() << RESET << std::endl;
+	LOG(excuteRuns.size());
+	vector<Int_t> rejectRuns = GetRunsFromString(rejectRun);
         for(int i=0; i<excuteRuns.size(); i++){
             int run = excuteRuns[i];
             bool isReject = false;
@@ -127,7 +139,9 @@ vector<TString> SejongDAQFlow::GetDAQFiles(TString path)
 }
 
 Bool_t SejongDAQFlow::CheckRunIDFormat(TString run)
-{
+{   
+
+    std::cout << MAGENTA << run.Sizeof() << RESET << std::endl;	
     if(run.Sizeof() != 10){return false;}
     return true;
 }
@@ -163,6 +177,8 @@ vector<Int_t> SejongDAQFlow::GetRunsFromString(TString run)
     if(run.Index(",") != -1){
         run.ReplaceAll(",", " ");
     }
+
+    std::cout << MAGENTA <<  run << RESET << std::endl;
 
     TObjArray *tokens = run.Tokenize(" ");
     for(int i=0; i<tokens->GetEntries(); i++){
@@ -213,9 +229,13 @@ vector<TString> SejongDAQFlow::GetDataBaseFile(TString run, bool isDAQStage)
 {
     vector<TString> runPathList;
 
+    LOG(kDataBasePath);
     TString dataBase;
     if(isDAQStage == true){dataBase = kDataBasePath+"daq";}
     if(isDAQStage == false){dataBase = kDataBasePath+"raw";}
+
+
+    std::cout << MAGENTA << "isDAQStage : " << isDAQStage << RESET << std::endl;
 
     TSystemDirectory dir("dir", dataBase);
 
@@ -232,7 +252,7 @@ vector<TString> SejongDAQFlow::GetDataBaseFile(TString run, bool isDAQStage)
             TString runName = runDir->GetName();
             if(!CheckRunIDFormat(runName)){continue;}
             if(run != runName){continue;}
-
+	    std::cout << MAGENTA << "RunName : " << runName << RESET << std::endl;
             TString runPath = dataBase+"/"+runName;
             TSystemDirectory subRunDir("", runPath);
             listOfFiles = subRunDir.GetListOfFiles();
@@ -244,6 +264,7 @@ vector<TString> SejongDAQFlow::GetDataBaseFile(TString run, bool isDAQStage)
                 if(!runFile){continue;}
 
                 TString path = dataBase+"/"+runName+"/"+fileName;
+		std::cout << "path : " << MAGENTA << path << RESET << std::endl;
                 if(fileName.Index(".graw") != -1 && isDAQStage == true){
                     runPathList.push_back(path);
                 }

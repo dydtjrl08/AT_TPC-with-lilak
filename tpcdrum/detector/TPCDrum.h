@@ -33,6 +33,11 @@ class TPCDrum : public LKDetector
 
         STDPadPlane* fPadPlane;
 
+	//SiPlane* fSiPlane;
+
+
+	TString fName = "TPCDrum";
+
     public:
         // ================== TPC-Drum Geometry parameters [mm] =====================
         // Chamber size
@@ -67,13 +72,16 @@ class TPCDrum : public LKDetector
         static const int fSiDetNum = 8;
         // const double fSiCaseHeight = 15.65;
         const double fSiCaseWidth = 4.9; // Si case size around active area
+        //const double fSiCaseWidth = 1.; // Si case size around active area
         const double fSiWidth = 40.3; // Si active width
         const double fSiHeight = 75.; // Si active height
         const double fSiThickness = 1.; // Si active thickness
-        const double fSiPlanePosAtPadPlaneCenter = 185.; // Si detectors x-z position with respect to pad plane center
+        //const double fSiPlanePosAtPadPlaneCenter = 185.; // Si detectors x-z position with respect to pad plane center
+        const double fSiPlanePosAtPadPlaneCenter = 141.5; // Si detectors x-z position with respect to pad plane center
         double fSiDetectorCenter[fSiDetNum][2]; // [si detector num][x, z] in local pad coordinate
         TString fSiDetectorName[fSiDetNum];
-        
+       	const double fDownStreamZ = 250.;
+        const double fDownStreamWidth = 140.;	
     ClassDef(TPCDrum,1);
 };
 

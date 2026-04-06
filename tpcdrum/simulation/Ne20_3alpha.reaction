@@ -13,7 +13,7 @@ Beam
  MeanY = 0 mm
  
  ZEmission = -330 mm # NOTE: TPC-Drum half-size 310 mm, please make sure value: -310 -beamEntranceDistance mm
-
+ ZProfile = -330 mm
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 TwoBodyReaction
@@ -29,29 +29,29 @@ TwoBodyReaction
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% sequential decay mode
 
-Decay 12C
- Daughter = 4He 8Be
- ExcitationEnergy = 0 0 0 MeV
- Threshold = 7.65 MeV
- BranchingRatio = 1.
- LifeTime = 0 ns
- Shoot= 1 1
-
-Decay 8Be
- Daughter = 4He 4He
- ExcitationEnergy = 0 0 0 MeV
- Threshold = 0 MeV
- BranchingRatio = 1.
- LifeTime = 0 ns
- Shoot= 1 1
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% direct 3 alpha decay mode
-
 #Decay 12C
-# Daughter = 4He 4He 4He
+# Daughter = 4He 8Be
 # ExcitationEnergy = 0 0 0 MeV
 # Threshold = 7.65 MeV
 # BranchingRatio = 1.
 # LifeTime = 0 ns
-# Shoot= 1 1 1
+# Shoot= 1 1
+
+#Decay 8Be
+# Daughter = 4He 4He
+# ExcitationEnergy = 0 0 0 MeV
+# Threshold = 0 MeV
+# BranchingRatio = 1.
+# LifeTime = 0 ns
+# Shoot= 1 1
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% direct 3 alpha decay mode
+
+Decay 12C
+ Daughter = 4He 4He 4He
+ ExcitationEnergy = 0 0 0 MeV
+ Threshold = 7.65 MeV
+ BranchingRatio = 1.
+ LifeTime = 0 ns
+ Shoot= 1 1 1
 

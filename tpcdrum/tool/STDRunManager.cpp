@@ -1,5 +1,5 @@
 #include "STDRunManager.h"
-
+#include <iostream>
 ClassImp(STDRunManager);
 
 STDRunManager::STDRunManager()
@@ -9,12 +9,19 @@ STDRunManager::STDRunManager()
 
 bool STDRunManager::Init()
 {
-    LKRun::AddDetector(new TPCDrum());
+    //LKRun::AddDetector(new TPCDrum());
 
     if(fInputRun != ""){
         fRunList = SejongDAQFlow::GetRunList(fInputRun, fRejectRun, fIsDAQStage);
-        if(fIsDAQStage){
+        lk_info << "RunList good? " << endl;
+	
+	for (const auto& fileName : fRunList[0].second){
+		std::cout << "Used fileName : " << fileName << std::endl;
+	}
+
+	if(fIsDAQStage){
             fDecoder = new STDDecoder();
+	   
             LKRun::SetEventTrigger(fDecoder);
         }
     }
@@ -31,7 +38,16 @@ bool STDRunManager::Run()
             LKRun::SetOutputFile(Form("./test_%i.root", fRunList[run].first));
             LKRun::Init();
 
-            // for AGET Decoder
+	    std::cout << "fRunList size : " << fRunList[run].first << std::endl;
+           
+
+	    for (auto fileName : fRunList[run].second) {
+			std::cout << fileName.Data() << std::endl;
+	    }
+	
+            std::cout << std::endl;
+
+	    // for AGET Decoder
             fDecoder -> Clear();
             if(fTotalEventNum != -1){fDecoder -> SetEventNumber(fTotalEventNum-fCurrentEventIdx-1);}
             if(fEventNumByRun != -1){fDecoder -> SetEventNumber(fEventNumByRun-1);}

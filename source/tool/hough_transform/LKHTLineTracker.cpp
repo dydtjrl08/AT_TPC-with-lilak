@@ -685,7 +685,7 @@ void LKHTLineTracker::SelectPoints(LKParamPointRT* paramPoint, double weightCut)
         auto weight = fWeightingFunction -> EvalFromPoints(imagePoint,paramPoint);
         if (weight > weightCut) {
             fSelectedImagePointIdxs.push_back(iImage);
-            //if (tagHit)
+            if (fHitArray -> GetEntriesFast() > iImage)
             {
                 auto hit = (LKHit*) fHitArray -> At(iImage);
                 fSelectedHitArray -> Add(hit);

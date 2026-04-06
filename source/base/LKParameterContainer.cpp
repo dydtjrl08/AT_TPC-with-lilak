@@ -1274,6 +1274,7 @@ LKParameterContainer* LKParameterContainer::CreateAnyContainer(TString any)
 
 void LKParameterContainer::Require(TString name, TString value, TString comment, TString type, int compare)
 {
+
     if (fParameterCollectionMode && fCollectedParameterContainer->FindPar(name)==nullptr)
     {
         auto parc = fCollectedParameterContainer -> SetPar(name, value, value, comment);

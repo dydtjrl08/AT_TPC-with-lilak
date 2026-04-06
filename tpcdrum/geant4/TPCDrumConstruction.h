@@ -76,7 +76,7 @@ class TPCDrumConstruction : public DetectorConstruction
         const double fHalfUnit = 0.5;
 
         TPCDrum* fTPCDrum;
-
+	TString fName = "TPCDrumConstruction";
     };
 
 #endif

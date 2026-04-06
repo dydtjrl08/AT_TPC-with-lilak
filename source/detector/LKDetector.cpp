@@ -44,6 +44,10 @@ bool LKDetector::Init()
 
     fPar -> UpdatePar(fUsePixelSpace,fName+"/UsePixelSpace false");
 
+
+    std::cout << "LKDetector::Init : " << std::endl;
+    std::cin.get();
+
     return true;
 }
 
@@ -118,6 +122,7 @@ void LKDetector::SetRun(LKVirtualRun *run)
     fRun = run;
     for (auto iPlane = 0; iPlane < fNumPlanes; ++iPlane) {
         auto plane = (LKDetectorPlane *) fDetectorPlaneArray -> At(iPlane);
+	lk_info << "plane is " << plane -> ClassName() << endl;
         plane -> SetRun(run);
     }
 }

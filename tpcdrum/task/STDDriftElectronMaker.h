@@ -2,6 +2,8 @@
 #define STDDriftElectronMaker_HH
 
 #include <time.h>
+#include <iostream>
+#include <cmath>
 
 #include "LKRun.h"
 #include "LKTask.h"
@@ -10,6 +12,7 @@
 #include "LKMCStep.h"
 #include "GETChannel.h"
 #include "LKMCTag.h"
+#include "LKMCTrack.h"
 
 #include "TMath.h"
 #include "TRandom3.h"
@@ -25,45 +28,61 @@
 #include "STDFieldDistortionMaker.h"
 
 class STDDriftElectronMaker : public LKTask
-{ 
-    public:
-        STDDriftElectronMaker();
-        virtual ~STDDriftElectronMaker() {}
+{
+  public:
+    STDDriftElectronMaker();
+    virtual ~STDDriftElectronMaker() {}
 
-        bool Init();
-        void Exec(Option_t*);
-        bool EndOfRun();
+    bool Init();
+    void Exec(Option_t*);
+    bool EndOfRun();
 
-    private:
-        void ConvertCoordinateGeantToPad();
-        int GetElectronClusterNum();
-        bool DriftElectron(double& x, double& y, double& z, double& t, double& w);
-        bool AvalancheElectron(double& x, double& y, double& z, double& t, double& w);
+    // Runtime switch:
+    //   true  -> use gating grid attenuation
+    //   false -> disable gating grid effect
+    void SetUseGatingGrid(bool val = true) { fUseGatingGrid = val; }
+    bool GetUseGatingGrid() const { return fUseGatingGrid; }
 
-        TPCDrum *fDetector;
-        STDPadPlane *fPadPlane;
+  private:
+    bool BindInputBranches();
+    void ConvertCoordinateGeantToPad();
+    int GetElectronClusterNum();
+    bool DriftElectron(double& x, double& y, double& z, double& t, double& w);
+    bool AvalancheElectron(double& x, double& y, double& z, double& t, double& w);
 
-        TRandom3* fRandom;
+    TPCDrum* fDetector = nullptr;
+    STDPadPlane* fPadPlane = nullptr;
 
-        STDSimTuningManager* fTuneManager;
-        STDGatingGridResponse* fGatingGrid;
-        STDFieldDistortionMaker* fFieldDistortion;
+    TRandom3* fRandom = nullptr;
 
-        TClonesArray* fChannelArray;
-        TClonesArray* fMCTagArray;
-        TClonesArray* fTrackArray;
-        TClonesArray* fStepArray;
+    STDSimTuningManager* fTuneManager = nullptr;
+    STDGatingGridResponse* fGatingGrid = nullptr;
+    STDFieldDistortionMaker* fFieldDistortion = nullptr;
 
-        GETChannel* fChannel;
-        LKMCTag* fMCTag;
-        LKMCStep* fStep;
+    TClonesArray* fChannelArray = nullptr;
+    TClonesArray* fMCTagArray = nullptr;
 
-        double fElectronStepSize;
-        bool fOnGatingGrid;
+    // Input branches are bound directly to the input TChain/TTree instead of
+    // relying on cached branch pointers from LKRun.
+    TClonesArray* fTrackArray = nullptr;
+    TClonesArray* fStepArray = nullptr;
+    bool fInputBranchesBound = false;
 
-        TVector3 fElectronUnitVec;
-        TVector3 fOthogonalUnitVec;
-        double fTBTime;
+    GETChannel* fChannel = nullptr;
+    LKMCTag* fMCTag = nullptr;
+    LKMCStep* fStep = nullptr;
+
+    double fElectronStepSize = 0.;
+    bool fOnGatingGrid = false;
+    bool fUseGatingGrid = true; // runtime configurable
+
+    TVector3 fElectronUnitVec;
+    TVector3 fOthogonalUnitVec;
+    double fTBTime = 10.;
+
+
+    double fGEMGainScale = 1.0;
+
 
     ClassDef(STDDriftElectronMaker, 1)
 };

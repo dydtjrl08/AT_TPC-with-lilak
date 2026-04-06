@@ -40,6 +40,8 @@ bool LKDetectorSystem::Init()
 {
     TString title("Detector System containing");
     SetDetectorPar();
+    std::cout << "SetDetectorPar" << std::endl;
+    std::cin.get();
 
     TGeoVolume *top = new TGeoVolumeAssembly("TOP");
     fGeoManager -> SetTopVolume(top);
@@ -168,10 +170,22 @@ void LKDetectorSystem::SetDetector(LKDetector *detector)
 
 void LKDetectorSystem::SetDetectorPar()
 {
+    
+    lk_info << " --- Detector System 내부 오브젝트 목록 --- "  << endl;
+    for (int i = 0; i < this -> GetEntries(); ++i){
+	TObject* obj = this -> At(i);
+	lk_info << " [" << i << "] 이름: " << obj -> GetName() << " / 타입: " << obj -> ClassName() << endl;
+    }
+
+	
     TIter next(this);
     LKDetector *detector;
-    while ((detector = (LKDetector *) next()))
+    while ((detector = (LKDetector *) next())){
         detector -> AddPar(fPar);
+	std::cout << detector -> ClassName() << std::endl;
+	(detector -> GetPar()) -> Print();
+	std::cin.get();
+    }
 }
 
 LKDetector *LKDetectorSystem::FindDetector(const char *name)

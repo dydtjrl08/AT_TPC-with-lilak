@@ -9,4 +9,4 @@ HadronElasticPhysics 1
 HadronPhysicsQGSP_BERT_HP 1
 IonGasModels 1
 StoppingPhysics 1
-Decay 1
+#Decay 1

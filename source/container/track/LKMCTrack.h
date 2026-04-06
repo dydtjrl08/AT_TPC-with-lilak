@@ -7,7 +7,7 @@
 #include "LKTracklet.h"
 #include <vector>
 using namespace std;
-
+#define CHECK_VOLUME
 #ifdef ACTIVATE_EVE
 #include "TEveElement.h"
 #endif
@@ -85,6 +85,13 @@ class LKMCTrack : public LKTracklet
         virtual TVector3 ExtrapolateByLength(Double_t l) const;
 
         virtual Double_t LengthAt(TVector3 point) const;
+
+#ifdef CHECK_VOLUME
+	
+	const vector<Int_t>& GetVolumeIDArray() const { return fVolumeID; }
+
+
+#endif
 
 #ifdef ACTIVATE_EVE
         virtual bool DrawByDefault();

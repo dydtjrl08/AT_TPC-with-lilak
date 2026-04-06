@@ -6,6 +6,7 @@
 #include "LKContainer.h"
 #include "LKDetectorSystem.h"
 #include "LKDetector.h"
+#include "LKParameterContainer.h"
 
 #include "TPCDrum.h"
 #include "STDPadPlane.h"
@@ -56,7 +57,7 @@ class STDMCViewer : public LKTask
 
         TString runNum;
 
-
+	TString Dir;
 
 
     ClassDef(STDMCViewer, 1)

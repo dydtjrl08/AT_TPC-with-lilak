@@ -31,6 +31,11 @@ class STDNoiseSubtractor : public LKTask
         void DrawRawADCPad(){fOnDrawRawADC = true;}
         void MakeNoiseShape(){fMakeNoiseShapeMode = true;}
 
+
+	// for finding Channel Idx
+	//void PrintSaturatedChannels();
+
+
     private:
         void InitNoiseTemplateSaving();
         void SaveNoiseTemplate();
@@ -68,6 +73,17 @@ class STDNoiseSubtractor : public LKTask
         int fTBInterval = 10; // for remove the pulse-like-pad
 
         double fTmpADCOffset = 1000.;
+
+	    // for finding channel Idx
+
+	    //bool fIsSaturated[ASADNUM][AGETNUM][CHANNUM];
+
+       // TH2D* fHistSiHitMap;
+       // TH2Poly* fPolySiFrame;
+
+        // Inspect source 
+
+       // TH2D* fHistSourceMap;
 
     ClassDef(STDNoiseSubtractor, 1)
 };

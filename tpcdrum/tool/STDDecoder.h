@@ -9,7 +9,8 @@
 #include "GETChannel.h"
 #include "TPCDrum.h"
 #include "STDPadPlane.h"
-
+//#include "TPCDrum_SiTest.h"
+//#include "SiDetector.h"
 #include "SejongDAQFlow.h"
 #include "GETDecoder.h"
 #include "GETBasicFrame.h"

@@ -2,7 +2,7 @@
 
 #include "G4Event.hh"
 #include "G4RunManager.hh"
-
+//#define LKG4_DEBUG_STEPPINGACTION
 LKSteppingAction::LKSteppingAction()
 : G4UserSteppingAction()
 {
@@ -41,10 +41,37 @@ void LKSteppingAction::UserSteppingAction(const G4Step* step)
 
 
     G4Track* track = step -> GetTrack();
+    
+//    G4int trackID = track -> GetTrackID();
+/*    if (fSiTrackStatus.find(trackID) == fSiTrackStatus.end()) {
+	fSiTrackStatus[trackID] = 3;
+    }
+*/
     G4ThreeVector pos = track -> GetPosition();
     G4ThreeVector mom = track -> GetMomentum();
     G4int preNo = step -> GetPreStepPoint() -> GetPhysicalVolume() -> GetCopyNo();
 
+    //g4man_info << "pre step Volume ID : " << preNo << endl;
+    
+    if (preNo >=12 && preNo <=19){
+    	fRunManager -> AddTrackVertex(preNo,5/*detector area*/,pos.x(), pos.y(), pos.z(), mom.x(), mom.y(), mom.z(), track->GetKineticEnergy());
+	 g4man_info <<" In detector ID : " << preNo << " , trackID : " << track->GetTrackID() << "(" << track->GetParticleDefinition()->GetParticleName() << ")" << " pos(" << pos.x() << ", " << pos.y() << ", " << pos.z() << ") "
+         << "Current Step Number : " << track -> GetCurrentStepNumber() << " , losing energy : " << step -> GetTotalEnergyDeposit() << "MeV, KineticEnergy : " << track -> GetKineticEnergy() << " MeV " << endl;  
+/*         if (track -> GetKineticEnergy() == 0. || track -> GetTrackStatus() == fStopAndKill) {
+		fSiTrackStatus[trackID] = 1;
+	 }
+	 else if (step -> GetPostStepPoint() -> GetStepStatus() == fGeomBoundary) {
+		G4VPhysicalVolume* postVol = step -> GetPostStepPoint() -> GetPhysicalVolume();
+		G4int postNo =  (postVol != nullptr) ? step -> GetPostStepPoint() -> GetTouchableHandle() -> GetCopyNumber() : -1;
+
+		if (postNo < 12 || postNo > 19) {
+		   fSiTrackStatus[trackID] = 2;
+		}
+	 }*/
+
+
+    }
+    
     if (stat==fWorldBoundary)
     {
         fRunManager -> AddTrackVertex(preNo, 1/*workld boundary*/, pos.x(), pos.y(), pos.z(), mom.x(),mom.y(),mom.z(), track->GetKineticEnergy());
@@ -54,8 +81,9 @@ void LKSteppingAction::UserSteppingAction(const G4Step* step)
         return;
     }
 
-    if (stat==fGeomBoundary)
+    if (stat==fGeomBoundary){
         fRunManager -> AddTrackVertex(preNo, 2/*geometry boundary*/, pos.x(), pos.y(), pos.z(), mom.x(),mom.y(),mom.z(), track->GetKineticEnergy());
+    }
 
     if (step->GetNumberOfSecondariesInCurrentStep()>0)
         fRunManager -> AddTrackVertex(preNo, 3/*secondary created*/, pos.x(), pos.y(), pos.z(), mom.x(),mom.y(),mom.z(), track->GetKineticEnergy());

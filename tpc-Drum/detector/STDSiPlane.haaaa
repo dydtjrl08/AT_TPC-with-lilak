@@ -1,0 +1,43 @@
+// // =====================================================
+// // *           Sejong TPC-Drum Main Pld Plane          *
+// // *           Author: Seunghwan Lee                   *
+// // =====================================================
+
+// #ifndef STDPADPALNE_HH
+// #define STDPADPALNE_HH
+
+// #include "LKDetectorPlane.h"
+// #include "LKLogger.h"
+
+// #include <map>
+// #include <tuple>
+// #include <vector>
+// #include "TH2Poly.h"
+
+// #include "GETChannel.h"
+// #include "LKMCTag.h"
+
+// class STDSiPlane : public LKDetectorPlane
+// {
+//     public:
+//         STDSiPlane();
+//         virtual ~STDSiPlane() { ; }
+
+//         bool Init();
+//         void Clear(Option_t *option="");
+//         void Print(Option_t *option="") const;
+
+//         bool SetDataFromBranch(){return true;}
+//         void FillDataToHist(){;}
+
+//         bool IsInBoundary(Double_t x, Double_t y); // coordinate on the pad plane surface 
+        
+//         // LKMCTag* GetMCTag(int idx){return (LKMCTag*)fMCTagArray->At(idx);}
+
+//     private:
+
+
+//     ClassDef(STDSiPlane,1);
+// };
+
+// #endif

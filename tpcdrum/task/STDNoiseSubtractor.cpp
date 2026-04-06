@@ -224,9 +224,7 @@ void STDNoiseSubtractor::Exec(Option_t *option)
             hPolyTime_subt -> Fill(x, y, maxTime);
             hPolyTime_Y -> Fill(y, maxTime);
 
-
             cTestCanvas -> cd();
-            // gPad -> SetLogy();
             hTestTB -> GetYaxis()->SetRangeUser(-200, 500.);
             hTestTB -> Draw("hist");
             hTestRawTB -> Draw("same, hist");

@@ -14,7 +14,12 @@ LKStackingAction::LKStackingAction(LKG4RunManager *man)
 
 G4ClassificationOfNewTrack LKStackingAction::ClassifyNewTrack(const G4Track* track)
 {
-    return fUrgent;
+
+	if (track -> GetParentID() == 0){
+		g4man_info << "Parent generates." << endl;
+	}	
+
+	return fUrgent;
 }
 
 void LKStackingAction::NewStage()

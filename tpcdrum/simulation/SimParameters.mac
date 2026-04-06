@@ -1,20 +1,24 @@
 LKG4Manager/
-    VisMode 1
+    VisMode 0
     NPToolMode true
-    #G4OutputFile mc_sequential_trigger_all_4.root
-    G4OutputFile test.root
+    G4OutputFile ./data/mc_0001.root
+    #G4OutputFile mc_direct_000.root
+    SetAutoUpdateCopyNo false
     SuppressG4InitMessage true
 
 NPTool/
     ReactionFile Ne20_3alpha.reaction
-    #ReactionFile SingleAlpha.reaction
-
+    #ReactionFile fusion.reaction
+    #ReactionFile SingleAlpha2.reaction
+    #ReactionFile SourceTestAlpha.reaction
 TPCDrum/
     GasPressure 760. #asasdf [torr]
     GasContourMixRatio 10. # [%] for contour gas
     WindowMaterial Havar # [Havar, etc..]
     WindowThickness 0.01 # [mm]
     GatingGrid true
+    PeakingTime 502
+    TBUnit 20
 
 persistency/
     MCTrackVertex true
@@ -23,9 +27,13 @@ persistency/
     MCStep true
 
 G4/
+    #gun/partile alpha
+    #gun/energy 40MeV
+    #gun/position 0 0 -330 mm
+    #gun/direction 0 0 1
     vis/open OGL 600x600-0+0
-    vis/scene/add/axes 0 0 0 100 mm
     vis/drawVolume
+    vis/scene/add/axes 0 0 0 10 cm
     vis/viewer/flush
     vis/viewer/set/lightsVector -1 0 0
     vis/viewer/set/style surface
@@ -42,4 +50,4 @@ G4/
     tracking/verbose 0
     vis/verbose warnings
     run/setCutForAGivenParticle e- 100. mm
-    run/beamOn 1
+    run/beamOn 10000

@@ -553,7 +553,12 @@ void LKG4RunManager::AddTrackVertex(Int_t detectorID, Int_t processID, Double_t 
 {
     if (fCurrentTrack == nullptr || !fTrackVertexPersistency)
         return;
+    
+    if(detectorID >= 6000 && detectorID <= 6007){
+    
+    	g4man_info << "AddTrackVertex, detectorID : " << detectorID << endl;
 
+    }
     fCurrentTrack -> AddVertex(detectorID, processID, vx, vy, vz, px, py, pz, energy);
 }
 

@@ -1,9 +1,13 @@
 #include "STDPadPlane.h"
+#define LOG_TRACE std::cout << ">>> [" << __PRETTY_FUNCTION__ << "] line " << __LINE__ << std::endl
+#define debug_cout std::cout << "[" << __func__ << ":" << __LINE__ << "] "
 
+#include <iostream>
 ClassImp(STDPadPlane);
 
 STDPadPlane::STDPadPlane()
 {
+    //LOG_TRACE;
     fName = "STDPadPlane";
     if (fChannelArray==nullptr)
         fChannelArray = new TObjArray();
@@ -12,7 +16,7 @@ STDPadPlane::STDPadPlane()
 bool STDPadPlane::Init()
 {
     lk_info << "Initializing STDPadPlane" << std::endl;
-
+    //LOG_TRACE;
     InitPadPlaneGeometry();
     InitPadMapping();
     InitChannelArray();
@@ -22,16 +26,19 @@ bool STDPadPlane::Init()
 
 void STDPadPlane::Clear(Option_t *option)
 {
-    LKDetectorPlane::Clear(option);
+        //LOG_TRACE;
+	LKDetectorPlane::Clear(option);
 }
 
 void STDPadPlane::Print(Option_t *option) const
 {
-    lk_info << "STDPadPlane" << std::endl;
+        //LOG_TRACE;
+	lk_info << "STDPadPlane" << std::endl;
 }
 
 bool STDPadPlane::IsInBoundary(Double_t x, Double_t y)
 {
+    //LOG_TRACE;  
     double extraGap = 2.; // [mm]
     double activePadPlaneWidth = GetType1PadNum()*(GetType1PadWidth()+GetPadGap()) + GetType2PadNum()*(GetType2PadWidth()+GetPadGap()) + extraGap;
     double activePadPlaneUpperBoundary = double(GetLayerNum()-1)*(GetPadHeight()+GetPadGap())+ (GetPadHeight()+GetPadGap())/2. + extraGap;
@@ -48,6 +55,7 @@ bool STDPadPlane::IsInBoundary(Double_t x, Double_t y)
 
 Int_t STDPadPlane::FindPadID(Double_t x, Double_t y)
 {
+    //LOG_TRACE;
     int padID = fPadPlanePoly -> FindBin(x, y);
     if(padID < 1){return -1;}
     return padID-1;
@@ -55,6 +63,7 @@ Int_t STDPadPlane::FindPadID(Double_t x, Double_t y)
 
 Int_t STDPadPlane::GetSectionID(int padID)
 {
+    //LOG_TRACE;
     Int_t row = GetRowID(padID);
     if(row < 0 || fRowNum <= row){return -1;}
     if(row < 27){return 0;}
@@ -65,6 +74,7 @@ Int_t STDPadPlane::GetSectionID(int padID)
 
 Int_t STDPadPlane::GetSectionID(int layer, int row)
 {
+    //LOG_TRACE;
     int padId = GetPadID(layer, row);
     return GetSectionID(padId);
 }
@@ -75,12 +85,14 @@ Int_t STDPadPlane::GetRowID(int padID){return int(padID%64);}
 Int_t STDPadPlane::GetRowID(int asad, int aget, int chan){return fPadMap.find(make_tuple(asad, aget, chan))->second.second;}
 Int_t STDPadPlane::GetPadID(int layer, int row)
 {
+    //LOG_TRACE;
     if(layer < 0 || fLayerNum <= layer){return -1;}
     if(row < 0 || fRowNum <= row){return -1;}
     return layer * fRowNum + row;
 }
 Int_t STDPadPlane::GetPadID(int asad, int aget, int chan)
 {
+    //LOG_TRACE;
     int layer = GetLayerID(asad, aget, chan);
     int row = GetRowID(asad, aget, chan);
     return GetPadID(layer, row);
@@ -88,6 +100,7 @@ Int_t STDPadPlane::GetPadID(int asad, int aget, int chan)
 
 Int_t STDPadPlane::GetAsAdID(int padID)
 {
+    //LOG_TRACE;
     int layer = GetLayerID(padID);
     int row = GetRowID(padID);
     for(auto it = fPadMap.begin(); it != fPadMap.end(); ++it){
@@ -100,6 +113,7 @@ Int_t STDPadPlane::GetAsAdID(int padID)
 
 Int_t STDPadPlane::GetAgetID(int padID)
 {
+    //LOG_TRACE;
     int layer = GetLayerID(padID);
     int row = GetRowID(padID);
     for(auto it = fPadMap.begin(); it != fPadMap.end(); ++it){
@@ -112,6 +126,7 @@ Int_t STDPadPlane::GetAgetID(int padID)
 
 Int_t STDPadPlane::GetChanID(int padID)
 {
+    //LOG_TRACE;
     int layer = GetLayerID(padID);
     int row = GetRowID(padID);
     for(auto it = fPadMap.begin(); it != fPadMap.end(); ++it){
@@ -129,11 +144,18 @@ Double_t STDPadPlane::GetY(int padID){return fPadPosMap_padIdx.find(padID)->seco
 
 Int_t STDPadPlane::GetFPNChannelID(int chan)
 {
-    if(0 <= chan && chan < 17) {return 11;} 
-    else if(chan < 34){return 22;} 
-    else if(chan < 51){return 45;} 
-    else if(chan < 68){return 56;}
-    return -1;
+    //LOG_TRACE;
+    
+    Int_t fpnID = -1;
+
+    if(0 <= chan && chan < 17) {fpnID = 11;} 
+    else if(chan < 34){fpnID = 22;} 
+    else if(chan < 51){fpnID = 45;} 
+    else if(chan < 68){fpnID = 56;}
+    
+    std::cout << "Ch No. " << chan << " , FPN Channel " << fpnID << std::endl;
+    
+    return fpnID;
 }
 
 Int_t STDPadPlane::GetAsAdNum(){return fAsAdNum;}
@@ -158,6 +180,7 @@ TH2Poly* STDPadPlane::GetPadPlanePoly(){return fPadPlanePoly;}
 
 TH2* STDPadPlane::GetHist(Option_t *option)
 {
+    //LOG_TRACE;
     return (TH2D *) nullptr;
 }
 
@@ -170,7 +193,7 @@ void STDPadPlane::InitPadPlaneGeometry()
     fPadPlanePoly = new TH2Poly();
     fPadPlanePoly -> SetStats(0);
     fPadPlanePoly -> SetTitle(";x [mm]; y [mm]");
-    
+    //LOG_TRACE;
     double boundaryX[5];
     double boundaryY[5];
 
@@ -211,41 +234,104 @@ void STDPadPlane::InitPadPlaneGeometry()
         }
     }
 }
-
+// omic 4
+// junction 16
+// aget 하나에 fpn  4개 포함하면 68개
+// 48개는 아무것도 없는 채널 단, 노이즈는 존재.
+// fpn은 보드 자체에 있음. 
+// si 디텍터 하나 당 fpn 채널 1개 
 void STDPadPlane::InitPadMapping()
 {
+    //LOG_TRACE;
     //mapping
     int connecterIdx = 12;
+    
+    // Si 디텍터가 연결된 AsAd, AGET 인덱스 알아야 한다
+    const int si_asad = 0;
+    const int ohm_aget = 0;
+    const int junc_aget = 3;
+    
+    const int LAYER_SI_OHMIC = 100;
+    const int LAYER_SI_JUNCTION = 101;
+
     for(int asad=0; asad<fAsAdNum; asad++){
         for(int aget=0; aget<fAGETNum; aget++){
-            int tmpBaseRowIdx = (connecterIdx%4 == 0)? 0 : (4 - connecterIdx%4)* 64/4;
-            int tmpBaseLayerIdx = 4 * abs(ceil((connecterIdx-1)/4) - 2);
+            
+            // 1. Si detector 매핑 전용 (Ohmic)
+            if(asad == si_asad && aget == ohm_aget){
+                for (int chan = 0; chan < fChanNum; chan++){
+                    if(IsFPNChannel(chan)) continue;
 
-            int pinIdx = 0;
-            for(int chan=0; chan<fChanNum; chan++){
-                if(IsFPNChannel(chan)){continue;}
-                pinIdx++;
+                    if (chan < 4) {
+                        int layer = LAYER_SI_OHMIC;
+                        int row = chan; 
+                        fPadMap.insert({make_tuple(asad,aget,chan), make_pair(layer,row)});
 
-                int row = tmpBaseRowIdx + (16-1) - (pinIdx - (pinIdx%4)) / 4;
-                if(pinIdx%4 == 0){row += 1;}
-
-                int layer = -1;
-                if(pinIdx%4 == 0){layer = tmpBaseLayerIdx + 2;}
-                else if(pinIdx%4 == 1){layer = tmpBaseLayerIdx;}
-                else if(pinIdx%4 == 2){layer = tmpBaseLayerIdx + 3;}
-                else if(pinIdx%4 == 3){layer = tmpBaseLayerIdx + 1;}
-
-                fPadMap.insert({make_tuple(asad, aget, chan), make_pair(layer, row)});
+                        std::cout << "Mapped Si Ohmic: AsAd" << asad << " AGet" << aget
+                              << " Ch" << chan << " -> L" << layer << " R" << row << std::endl;
+                    }
+                    // 나머지 채널은 매핑 안 함
+                }
             }
-            connecterIdx--;
+            
+            // 2. Si Detector - Junction Side 매핑 (AsAd 0, AGet 3)
+            else if (asad == si_asad && aget == junc_aget) {
+                for (int chan = 0; chan < fChanNum; chan++){
+                    if(IsFPNChannel(chan)) continue;
+                
+                    if (chan < 16) {
+                        int layer = LAYER_SI_JUNCTION;
+                        int row = chan; // 0 ~ 15
+                        fPadMap.insert({make_tuple(asad, aget,chan), make_pair(layer,row)});
+
+                        std::cout << "Mapped Si Junction: AsAd" << asad << " AGet" << aget 
+                              << " Ch" << chan << " -> L" << layer << " R" << row << std::endl;
+                    }
+                }
+            }
+
+            // 3. 일반 TPC 매핑 (위의 두 경우가 아닐 때 실행)
+            else {
+                int tmpBaseRowIdx = (connecterIdx%4 == 0)? 0 : (4 - connecterIdx%4)* 64/4;
+                int tmpBaseLayerIdx = 4 * abs(ceil((connecterIdx-1)/4) - 2);
+                int pinIdx = 0;
+                
+                for(int chan=0; chan<fChanNum; chan++){
+                    if(IsFPNChannel(chan)){continue;}
+                    pinIdx++;
+
+                    int row = tmpBaseRowIdx + (16-1) - (pinIdx - (pinIdx%4)) / 4;
+                    if(pinIdx%4 == 0){row += 1;}
+
+                    int layer = -1;
+                    if(pinIdx%4 == 0){layer = tmpBaseLayerIdx + 2;}
+                    else if(pinIdx%4 == 1){layer = tmpBaseLayerIdx;}
+                    else if(pinIdx%4 == 2){layer = tmpBaseLayerIdx + 3;}
+                    else if(pinIdx%4 == 3){layer = tmpBaseLayerIdx + 1;}
+
+                    fPadMap.insert({make_tuple(asad, aget, chan), make_pair(layer, row)});
+                }
+            }
+
+            // [중요] 여기가 핵심입니다!
+            // Si든 TPC든 루프가 끝나면 무조건 인덱스를 하나 줄여야 다음 위치가 맞습니다.
+            connecterIdx--; 
         }
     }
 }
 
+
+
+
 void STDPadPlane::InitChannelArray()
 {
+    LOG_TRACE;
     fChannelArray = new TObjArray();
     fMCTagArray = new TObjArray();
+  
+    debug_cout << "Pad Number : " << GetPadNum() << std::endl;
+
+
 
     for(int i=0; i<GetPadNum(); i++){
         GETChannel* channel = new GETChannel();
@@ -262,6 +348,9 @@ void STDPadPlane::InitChannelArray()
 
 bool STDPadPlane::IsFPNChannel(int chan)
 {
+    LOG_TRACE;
+    std::cout << "IsFPNChannel ? ch No. " << chan << std::endl;
+
     if(chan == 11 || chan == 22 || chan == 45 || chan == 56){return true;}
     return false;
 }

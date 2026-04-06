@@ -84,19 +84,25 @@ G4VPhysicalVolume* TPCDrumConstruction::Construct()
         TString siName = fTPCDrum->fSiDetectorName[i];
         G4LogicalVolume* logicSi = GetSiDetector(siName);
         logicSi -> SetVisAttributes(GetColor("YELLOW", 0.4));
-
+/*	auto visat_Si = new G4VisAttributes();
+	visat_Si -> SetColor(G4Colour::Green());
+	logicSi -> SetVisAttributes(visat_Si);
+*/
         double SiLocalPosX = fTPCDrum->fSiDetectorCenter[i][0];
         double SiLocalPosZ = fTPCDrum->fSiDetectorCenter[i][1];
 
         double x = 0.;
         double y = 0.;
-        double z = fTPCDrum->fSiPlanePosAtPadPlaneCenter;
-        fTPCDrum->GetCoordinateGeantToPad(x, y, z);
+        double z = fTPCDrum->fSiPlanePosAtPadPlaneCenter; // 185 
+        fTPCDrum->GetCoordinateGeantToPad(x, y, z); // 여기서 y = 251 할당됨.
         double SiLocalPosY = y;
 
+	lk_info << "SiLocalPosY : " << SiLocalPosY << endl;
+	lk_info << "SiLocalPosX : " << SiLocalPosX << endl;
+	lk_info << "SiLocalPosZ : " << SiLocalPosZ << endl;
         fTPCDrum->GetCoordinatePadToGeant(SiLocalPosX, SiLocalPosY, SiLocalPosZ);
         double rotation = (i<6)? CLHEP::pi/2 : 0.;
-
+	lk_info << i << "th index's si Name : " << siName << endl;
         auto pvpGatingGrid = new G4PVPlacement(new G4RotationMatrix(0., 0., rotation), G4ThreeVector(SiLocalPosX, SiLocalPosY, SiLocalPosZ), logicSi, siName.Data(), logicChamber, false, 12+i, true);
         runManager -> SetSensitiveDetector(pvpGatingGrid);
     }
@@ -157,6 +163,8 @@ G4LogicalVolume* TPCDrumConstruction::GetTPCDrumChamber()
     double chamberHeight = fTPCDrum->fChamberHeight *mm;
     double flangeR = fTPCDrum->fFlangeR *mm;
     double beamLineLength = fTPCDrum->fBeamLineLength *mm;
+    lk_info << "Chamber Height : " << chamberHeight << " mm" << endl;
+    lk_info << "Chamber Radius : " << chamberR << " mm" << endl;
 
     G4Tubs* solidChamber = new G4Tubs("chamber", 0., chamberR*fHalfUnit, chamberHeight*fHalfUnit, 0., 360*deg);
     G4Tubs* solidFlange_Beamline = new G4Tubs("flange_beamline", 0., flangeR*fHalfUnit, beamLineLength*fHalfUnit, 0., 360*deg);

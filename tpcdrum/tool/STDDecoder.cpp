@@ -93,6 +93,9 @@ Int_t STDDecoder::AddFiles()
 
 Int_t STDDecoder::FillData()
 {
+    std::cout << "STDDecoder::FillData()" << std::endl;
+
+
     fChannelArray -> Clear("C");
     int channelIdx = 0;
     for(int asad=0; asad<fAsAdNum; asad++){

@@ -588,6 +588,7 @@ bool LKRun::Init()
     TString collecteParAndPrintTo = "";
     bool drawAfterRun = false;
     TString drawOption = "";
+    std::cout << "IsLILAKRun? " << fIsLILAKRun << std::endl;
     if (fIsLILAKRun)
     {
         LKClassFactory classFactory(this);
@@ -627,6 +628,7 @@ bool LKRun::Init()
         }
     }
 
+
     int countParOrder = 1;
     fPar -> Require("lilak/add",          "LKTask",         "add task or detector class", "t/", countParOrder++);
     fPar -> Require("lilak/print",        "all",            "print after init gen:par:out:in:det:task", "t/", countParOrder++);
@@ -653,6 +655,10 @@ bool LKRun::Init()
     fPar -> Require("LKRun/UpdateOutputFile",     false,    "update root file with option update","t/", countParOrder++);
     fPar -> Require("LKRun/FileName",             "",       "file name will be fixed to this name if it is not null string","t/", countParOrder++);
 
+
+    std::cout << "fPar : " << fPar -> ClassName() << std::endl;
+
+    std::cin.get();
 
     if (!fRunNameIsSet) {
         fPar -> UpdatePar(fRunName,  "LKRun/Name");
@@ -820,7 +826,7 @@ bool LKRun::Init()
         }
 
         fNumEntries = fInputTree -> GetEntries();
-        lk_info << fInputTree -> GetName() << " tree containing " << fInputTree -> GetEntries() << " entries." << endl;
+        //lk_info << fInputTree -> GetName() << " tree containing " << fInputTree -> GetEntries() << " entries." << endl;
 
         TObjArray *branchArray = fInputTree -> GetListOfBranches();
         Int_t numBranches = branchArray -> GetEntries();
@@ -833,9 +839,16 @@ bool LKRun::Init()
                 continue;
             fBranchNames.push_back(branchName);
             fInputTree -> SetBranchStatus(branchName, 1);
-            fInputTree -> SetBranchAddress(branchName, &fBranchPtr[fCountBranches]);
-            fBranchPtrMap[branchName] = fBranchPtr[fCountBranches];
-            fCountBranches++;
+	    fInputTree -> SetBranchAddress(branchName, &fBranchPtr[fCountBranches]);
+            lk_info << "branchName : " << fBranchPtr[fCountBranches] -> ClassName() << endl;
+	    /*fBranchPtrMap[branchName] = fBranchPtr[fCountBranches];
+            fCountBranches++;*/
+
+	    fBranchIndexMap[branchName] = fCountBranches;
+            fBranchPtrMap[branchName] = fBranchPtr[fCountBranches]; // 남겨도 되지만 핵심은 index
+	    fCountBranches++;
+
+
         }
         // Reason for calling GetEntry is to setting the class to the TClonesArray.
         // Without doing this, TClonesArray do not hold the class and KeepBranchA() method will not work.
@@ -855,9 +868,9 @@ bool LKRun::Init()
             lk_info << "Input branch (" << numMCStepIDs  << ") MCStep[";
             for (Int_t iID = 0; iID < numMCStepIDs-1; iID++) {
                 auto id = arrMCStepIDs[iID];
-                lk_cout << id << ", ";
+                lk_info << id << ", " << endl;
             }
-            lk_cout << arrMCStepIDs.back() << "] found" << endl;
+            lk_info << arrMCStepIDs.back() << "] found" << endl;
         }
 
         for (Int_t iFriend = 0; iFriend < fNumFriends; iFriend++) {
@@ -923,6 +936,11 @@ bool LKRun::Init()
         lk_warning << "Input file is not set!" << endl;
     }
 
+
+    std::cout << "fDetectorSystem : " << fDetectorSystem -> ClassName() << std::endl;
+    std::cin.get();
+
+
     if (fDetectorSystem->GetEntries()!=0)
     {
         fDetectorSystem -> SetRun(this);
@@ -934,6 +952,8 @@ bool LKRun::Init()
         }
         fDetectorSystem -> SetTransparency(80);
         fDetectorSystem -> Print();
+	std::cout << "fDetectorSystem Print! " << std::endl;
+	std::cin.get();
     }
 
     if (fOutputPath.IsNull() && fPar -> CheckPar("LKRun/OutputPath"))
@@ -1184,6 +1204,11 @@ TClonesArray* LKRun::RegisterBranchA(TString name, const char* className, Int_t 
     array -> SetName(name);
 
     TString persistencyParName = TString("persistency/") + name;
+    
+    std::cout << persistencyParName << std::endl;
+    std::cin.get();
+
+
     TString persistencyMessage;
     if (fPar -> CheckPar(persistencyParName + " true")) {
         persistent = fPar -> GetParBool(persistencyParName);
@@ -1198,11 +1223,21 @@ TClonesArray* LKRun::RegisterBranchA(TString name, const char* className, Int_t 
         else
             persistencyMessage = "(temporary)";
     }
-
+/*
     fBranchPtr[fCountBranches] = array;
     fBranchPtrMap[name] = fBranchPtr[fCountBranches];
     fBranchNames.push_back(name);
     fCountBranches++;
+*/
+
+
+    fBranchPtr[fCountBranches] = array;
+    fBranchIndexMap[name] = fCountBranches;
+    fBranchPtrMap[name] = fBranchPtr[fCountBranches];
+    fBranchNames.push_back(name);
+    fCountBranches++;
+
+
 
     if (persistent) {
         if (fOutputTree != nullptr) {
@@ -1264,9 +1299,11 @@ TClonesArray *LKRun::GetBranchA(Int_t idx)
     return (TClonesArray *) nullptr;
 }
 
-TClonesArray *LKRun::GetBranchA(TString name, bool complainIfDoNotExist)
+/*TClonesArray *LKRun::GetBranchA(TString name, bool complainIfDoNotExist)
 {
     auto dataContainer = fBranchPtrMap[name];
+    std::cout << "dataContainer? " << dataContainer -> ClassName() << std::endl;
+    std::cin.get();
     if (dataContainer==nullptr) {
         if (complainIfDoNotExist)
             lk_error << "Branch " << name << " does not exist!" << endl;
@@ -1276,7 +1313,23 @@ TClonesArray *LKRun::GetBranchA(TString name, bool complainIfDoNotExist)
     else
         return (TClonesArray *) dataContainer;
     return (TClonesArray *) nullptr;
+}*/
+
+
+
+TClonesArray *LKRun::GetBranchA(TString name, bool complainIfDoNotExist)
+{
+    auto it = fBranchIndexMap.find(name);
+    if (it == fBranchIndexMap.end()) {
+        if (complainIfDoNotExist)
+            lk_error << "Branch " << name << " does not exist!" << endl;
+        return (TClonesArray *) nullptr;
+    }
+
+    return fBranchPtr[it->second];
 }
+
+
 
 TClonesArray *LKRun::KeepBranchA(TString name) {
     TClonesArray* dataContainer = GetBranchA(name);
