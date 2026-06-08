@@ -1,0 +1,7 @@
+26050900n_configuration
+26050900n_configuration,,,,,,,,,,,,,,
+system,daq,asadID,detType,PositionName,detID,ChannelMatch,bias,voltage,current[uA],connectorDir,normalDir,x,y,z
+GET,rCoBo,0,x6si,RU,45,2A,8,150,2.95,+x,-y,61.95,212,152.4
+GET,rCoBo,0,x6si,RM,33,2B,7,150,0.9,+x,-y,61.95,212,106.2
+GET,rCoBo,0,x6si,LU,15,2C,6,150,0.6,-x,-y,-61.95,212,152.4
+GET,rCoBo,0,x6si,LM,35,2D,5,150,1.2,-x,-y,-61.95,212,106.2
